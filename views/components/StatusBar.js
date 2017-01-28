@@ -1,7 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
-const { StyleSheet, Text, View} = ReactNative;
+const { Platform, StyleSheet, Text, View} = ReactNative;
 
 class StatusBar extends Component {
   render() {
@@ -19,7 +19,15 @@ class StatusBar extends Component {
 var styles = StyleSheet.create({
   statusbar: {
     backgroundColor: '#fff',
-    height: 22,
+
+    ...Platform.select({
+      ios: {
+        height: 22,
+      },
+      android: {
+        height: 0,
+      },
+    }),
   },
   navbar: {
     alignItems: 'center',

@@ -82,7 +82,6 @@ class LoginPage extends Component {
     {
       return(
         <LoginButton
-          publishPermissions={[]}
           onLoginFinished={(error, result) => {this.onLoginFinished(error,result)}}
           onLogoutFinished={() => console.log("logout.")}
         />

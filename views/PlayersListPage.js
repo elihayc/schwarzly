@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react'
+import update from 'immutability-helper';
 import {
   StyleSheet,
   View,
@@ -26,7 +27,10 @@ class PlayersListPage extends Component {
   constructor(props) {
     super(props);
 
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    const ds = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2,
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+    });
 
     this.state = {dataSource: ds};
 
@@ -39,22 +43,14 @@ class PlayersListPage extends Component {
     this.loadUsersAndListenForEvents(eventAfterDate);
   }
 
-  mergeAllusersToEvent(eventUsers, allUsers){
-    // Init Event Users
-    if (eventUsers == null){
-      eventUsers = {}
-    }
+  getUsersWithUnkwonStatus(allUsers, eventUsers){
+    var unknownStatusUsers = Object.keys(allUsers).reduce(function (filtered, key) {
+        if (eventUsers == null || eventUsers[key] == null) filtered[key] = allUsers[key];
+        return filtered;
+    }, {});
 
-    // Adding missing users to the event
-    for (var key in allUsers) {
-      if (eventUsers[key] == null){
-        eventUsers[key] = allUsers[key];
-      }
-    }
-    return eventUsers;
+    return unknownStatusUsers;
   }
-
-
 
   loadUsersAndListenForEvents(eventAfterDate){
       // Load all users once
@@ -72,12 +68,14 @@ class PlayersListPage extends Component {
                 Object.keys(eventData['users']).forEach((user)=> { if (eventData['users'][user].attending == "Attending") {attendingCount++} })
               }
 
-              // Add missing users to the event
-              eventData['users'] = this.mergeAllusersToEvent(eventData['users'], this.users);
+              // Create sectionsData
+              var sectionsData = {}
+              sectionsData['attending'] = eventData['users'] != null ? eventData['users'] : {};
+              sectionsData['unknown'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
 
               // Refresh the state and screen
               this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(eventData['users']),
+                dataSource: this.state.dataSource.cloneWithRowsAndSections(sectionsData),
                 eventDate: eventData['date'],
                 eventId: eventId,
                 attendingCount: attendingCount
@@ -157,8 +155,15 @@ class PlayersListPage extends Component {
 //-------------------------------------------------------------------------------------
 
   setAttending(user, attendingStatus){
-    user.attending = attendingStatus;
-    this.fireBaseMgr.setUserInEvent(this.state.eventId, user);
+    // If the same status pressed again
+    if (user.attending == attendingStatus){
+      this.fireBaseMgr.deleteUserFromEvent(this.state.eventId, user);
+    }
+    else{
+      var cloneUser = update(user, {$merge:{'attending':attendingStatus}});
+      // cloneUser.attending = attendingStatus;
+      this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
+    }
   }
 
   _renderItem(user) {
@@ -166,6 +171,12 @@ class PlayersListPage extends Component {
       <ListItem user={user} onPress={this.setAttending.bind(this)} />
     );
   }
+  _renderSectionHeader(sectionData, category){
+    return (
+      <Text style={{fontWeight: "700"}}>{category}</Text>
+    );
+  }
+
   titleText(){
     return (this.state.eventDate != null) ? this.state.eventDate + '\n' + this.state.attendingCount :'loading...'
   }
@@ -178,6 +189,7 @@ class PlayersListPage extends Component {
 
         <ListView dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
+          renderSectionHeader={this._renderSectionHeader}
           style={styles.listView}
         />
 

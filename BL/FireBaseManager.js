@@ -34,6 +34,11 @@ export default class FireBaseManager {
     this.eventsRef.child(eventId + '/users/' + user['id']).set(user);
   }
 
+  deleteUserFromEvent(eventId, user)
+  {
+    this.eventsRef.child(eventId + '/users/' + user['id']).remove();
+  }
+
 }
 
 module.export = FireBaseManager

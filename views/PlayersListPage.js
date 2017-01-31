@@ -95,77 +95,7 @@ class PlayersListPage extends Component {
           });
       });
   }
-
-//-------------------------------------------------------------------------------------
-// Async load for events
-//-------------------------------------------------------------------------------------
-  // dataReceived(events, users)
-  // {
-  //   console.log('merged' + events);
-  //   console.log('merged' + users);
-  // }
-  //
-  // // merge data Idea from:
-  // //https://firebase.googleblog.com/2013/10/queries-part-1-common-sql-queries.html
-  // //http://jsfiddle.net/katowulf/9GEFf/
-  // loadEventsAndUsers(){
-  //   // .startAt('20170115').endAt('201702')
-  //   var events = {};
-  //   var users = {};
-  //   var counter = 0;
-  //   this.fireBaseMgr.eventsRef.startAt('20170114').endAt('20170816').orderByKey().once('value',(snap) =>{
-  //     // add it to the merged data
-  //     events = snap.val();
-  //     console.log('events' + snap.val());
-  //     if (++counter == 2){
-  //       this.dataReceived(events, users);
-  //     }
-  //   });
-  //   this.fireBaseMgr.usersRef.once('value',(snap) =>{
-  //     // add it to the merged data
-  //     users = snap.val();
-  //     console.log('users' + snap.val());
-  //     if (++counter == 2){
-  //       this.dataReceived(events, users);
-  //     }
-  //   });
-  // }
-//-------------------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------------------
-// Old load users
-//-------------------------------------------------------------------------------------
-
-  // updateListViewDataSource(users){
-  //   this.setState({
-  //     dataSource: this.state.dataSource.cloneWithRows(users)
-  //   });
-  // }
-  //
-  //
-  // listenForItems(usersRef) {
-  //   usersRef.on('value', (snap) => {
-  //
-  //     // // get children as an array
-  //     // var users = [];
-  //     // snap.forEach((child) => {
-  //     //   users.push({
-  //     //     firstName: child.val().firstName,
-  //     //     lastName: child.val().lastName,
-  //     //     imageUrl: child.val().imageUrl,
-  //     //     attending: child.val().attending,
-  //     //     _key: child.key
-  //     //   });
-  //     // });
-  //     // this.updateListViewDataSource(users);
-  //
-  //     this.updateListViewDataSource(snap.val());
-  //
-  //   });
-  // }
-  //
-//-------------------------------------------------------------------------------------
-
+  
   setAttending(user, attendingStatus){
     // If the same status pressed again
     if (user.attending == attendingStatus){

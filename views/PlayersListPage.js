@@ -62,23 +62,35 @@ class PlayersListPage extends Component {
               var eventId = Object.keys(snap.val())[0];
               var eventData = snap.val()[eventId];
 
-              // Count attendings
+              // Create sectionsData
+              var sectionsData = {Attending:[], NotAttending:[]};
+
+              // Reset Counters
               var attendingCount = 0;
+              var notAttendingCount = 0;
+
               if (eventData['users'] != null){
-                Object.keys(eventData['users']).forEach((user)=> { if (eventData['users'][user].attending == "Attending") {attendingCount++} })
+                Object.keys(eventData['users']).forEach((user)=> {
+                  if (eventData['users'][user].attending == "Attending") {
+                    attendingCount++
+                    sectionsData['Attending'].push(eventData['users'][user]);
+                  }
+                  else {
+                    notAttendingCount++
+                    sectionsData['NotAttending'].push(eventData['users'][user]);
+                  }
+                })
               }
 
-              // Create sectionsData
-              var sectionsData = {}
-              sectionsData['attending'] = eventData['users'] != null ? eventData['users'] : {};
-              sectionsData['unknown'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
+              sectionsData['Unknown'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
 
               // Refresh the state and screen
               this.setState({
                 dataSource: this.state.dataSource.cloneWithRowsAndSections(sectionsData),
                 eventDate: eventData['date'],
                 eventId: eventId,
-                attendingCount: attendingCount
+                attendingCount: attendingCount,
+                notAttendingCount: notAttendingCount
               });
           });
       });

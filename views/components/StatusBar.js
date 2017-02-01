@@ -36,12 +36,12 @@ var styles = StyleSheet.create({
     borderColor: 'transparent',
     borderWidth: 1,
     justifyContent: 'center',
-    height: 44,
+    height: 64,
     flexDirection: 'row'
   },
   navbarTitle: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "500",
     textAlign: 'center'
   },

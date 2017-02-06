@@ -8,6 +8,8 @@ import {
   Text,
 } from 'react-native';
 
+import codePush from "react-native-code-push";
+
 const FBSDK = require('react-native-fbsdk');
 const {
   AccessToken
@@ -89,3 +91,4 @@ class schwarzly extends Component {
 }
 
 AppRegistry.registerComponent('schwarzly', () => schwarzly);
+schwarzly = codePush(schwarzly);

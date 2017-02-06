@@ -22,6 +22,8 @@ const {
 
 const StatusBar = require('./components/StatusBar');
 const ListItem = require('./components/ListItem');
+const SectionHeader = require('./components/SectionHeader');
+
 
 class PlayersListPage extends Component {
   constructor(props) {
@@ -63,64 +65,74 @@ class PlayersListPage extends Component {
               var eventData = snap.val()[eventId];
 
               // Create sectionsData
-              var sectionsData = {Attending:[], NotAttending:[]};
+              var sectionsData = {Attending:[], "Not Attending":[], Maybe:[]};
 
               // Reset Counters
               var attendingCount = 0;
-              var notAttendingCount = 0;
 
               if (eventData['users'] != null){
                 Object.keys(eventData['users']).forEach((user)=> {
                   if (eventData['users'][user].attending == "Attending") {
-                    attendingCount++
+                    attendingCount++;//TODO: delete attendingCount
                     sectionsData['Attending'].push(eventData['users'][user]);
                   }
-                  else {
-                    notAttendingCount++
-                    sectionsData['NotAttending'].push(eventData['users'][user]);
+                  else if (eventData['users'][user].attending == "Not Attending"){
+                    sectionsData['Not Attending'].push(eventData['users'][user]);
+                  }
+                  else{
+                    sectionsData['Maybe'].push(eventData['users'][user]);
                   }
                 })
               }
 
-              sectionsData['Unknown'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
+              sectionsData['Pending'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
 
               // Refresh the state and screen
               this.setState({
                 dataSource: this.state.dataSource.cloneWithRowsAndSections(sectionsData),
                 eventDate: eventData['date'],
                 eventId: eventId,
-                attendingCount: attendingCount,
-                notAttendingCount: notAttendingCount
+                attendingCount: attendingCount
               });
           });
       });
   }
-  
+
   setAttending(user, attendingStatus){
-    // If the same status pressed again
-    if (user.attending == attendingStatus){
+    // Delete Pending users
+    if (attendingStatus == "Delete"){
       this.fireBaseMgr.deleteUserFromEvent(this.state.eventId, user);
     }
     else{
       var cloneUser = update(user, {$merge:{'attending':attendingStatus}});
-      // cloneUser.attending = attendingStatus;
+      // cloneUser.userSatusLine = userSatusLine;
+
       this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
     }
   }
 
+  setUserStatusLine(user, statusLine)
+  {
+    var cloneUser = update(user, {$merge:{'statusLine':statusLine}});
+
+    this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
+  }
+
   _renderItem(user) {
     return (
-      <ListItem user={user} onPress={this.setAttending.bind(this)} />
+      <ListItem user={user}
+          onAttendingChange={this.setAttending.bind(this)}
+          onStatusLineChange={this.setUserStatusLine.bind(this)} />
     );
   }
   _renderSectionHeader(sectionData, category){
     return (
-      <Text style={{fontWeight: "700"}}>{category}</Text>
+      <SectionHeader sectionData={sectionData} category={category} />
     );
   }
 
   titleText(){
-    return (this.state.eventDate != null) ? this.state.eventDate + '\n' + this.state.attendingCount :'loading...'
+    return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
   }
 
   render(){

@@ -1,53 +1,89 @@
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
+import Dialog from 'react-native-dialog';
 
 const sharedStyles = require('../styles/styles.js')
-const { StyleSheet, View, Image, Button, TouchableHighlight, Text } = ReactNative;
+const { Platform, StyleSheet, View, Image, Button, TouchableOpacity, Text } = ReactNative;
 
 
 class ListItem extends Component {
-  _isAttending(attendingValue){
-    return (attendingValue != null) ? attendingValue : 'Pending'
-  }
 
-  _buttonSelectionClass(buttonValue){
-    return (buttonValue == this.props.user.attending) ? styles.selectedButton : styles.unSelectedButton;
+  _getUserStatusLine()
+  {
+    var defaultText = "What's in your mind?";
+    return (this.props.user.statusLine == null && this.props.user.attending != null) ?
+      (<Text style={{color: "gray"}}>{defaultText}</Text>) :
+      (<Text style={{color: "gray"}}>{this.props.user.statusLine}</Text>);
+
   }
 
   _buttonTextClass(buttonValue){
     return (buttonValue == this.props.user.attending) ? styles.selectedButtonText : styles.buttonText;
   }
 
+  _getStatusIconUri(userAttendingValue){
+    switch (userAttendingValue) {
+      case "Attending":
+        return require("../../resources/football.png");
+        break;
+      case "Not Attending":
+        return require("../../resources/house.png");
+        break;
+      default:
+        return null;
+    }
+
+  }
+
+  _showStatusLineAlert(){
+    Dialog.prompt(this.props.user.firstName +" " + this.props.user.lastName  , "what's on your mind?", [
+        {text: 'OK', onPress: (promptValue)=> this.props.onStatusLineChange(this.props.user,promptValue), style: 'default'},
+        {text: 'Cancel', onPress: null, style: 'destructive'},
+      ]  ,
+      undefined
+    );
+  }
+  _showAttendingAlert(){
+    var arr = ["Attending", "Not Attending", "Clear"];
+
+    Dialog.showActionSheetWithOptions({
+                    options: arr,
+                    cancelButtonIndex: arr.length - 1,
+                    destructiveButtonIndex: arr.length - 1,
+                },
+                (buttonIndex) => {
+                    this.props.onAttendingChange(this.props.user, arr[buttonIndex]);
+                });
+  }
+
+  // <TouchableOpacity onPress={()=> this._showStatusLineAlert()} >
+  //   {this._getUserStatusLine()}
+  // </TouchableOpacity>
   render() {
     return (
-      <View style={styles.li}>
-        <View style={styles.leftView}>
-            <View style={styles.userDetailsView}>
-              <Image
-                  style={{width: 50, height: 50, borderRadius: 25}}
-                  source={{uri: this.props.user.imageUrl}}
-              />
+      <TouchableOpacity onPress={()=> this._showAttendingAlert()} >
+
+        <View style={styles.li}>
+
+            <View style={styles.leftView}>
+                  <Image
+                      style={{width: 50, height: 50, borderRadius: 25}}
+                      source={{uri: this.props.user.imageUrl}}
+                  />
             </View>
-            <Text style={styles.liText}>     {this.props.user.firstName}</Text>
 
+            <View style={styles.centerView}>
+              <Text style={styles.liText}>{this.props.user.firstName} {this.props.user.lastName}</Text>
+            </View>
+
+            <View style={styles.rightView}>
+                <Image
+                    style={{width: 50, height: 50, borderRadius: 0}}
+                    source={this._getStatusIconUri(this.props.user.attending)}
+                />
+            </View>
         </View>
-        <View style={styles.rightView}>
-            <TouchableHighlight
-              style={[styles.button, this._buttonSelectionClass('Attending')]}
-              onPress={()=> this.props.onPress(this.props.user, "Attending")}
-              underlayColor='#fff' >
-                <Text style={this._buttonTextClass('Attending')}>    V    </Text>
-            </TouchableHighlight>
-
-
-            <TouchableHighlight
-              style={[styles.button, this._buttonSelectionClass('NotAttending')]}
-              onPress={()=> this.props.onPress(this.props.user, "NotAttending")}
-              underlayColor='#fff' >
-                <Text style={this._buttonTextClass('NotAttending')}>    X    </Text>
-            </TouchableHighlight>
-        </View>
-      </View>
+      </TouchableOpacity>
 
     );
   }
@@ -67,13 +103,19 @@ var styles = StyleSheet.create({
   },
   leftView: {
     flexDirection: 'row',
-    flex:0.5,
+    flex:0.2,
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
+  centerView: {
+    flexDirection: 'column',
+    flex:0.6,
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+  },
   rightView: {
     flexDirection:'row',
-    flex: 0.5,
+    flex: 0.2,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
@@ -81,33 +123,6 @@ var styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
   },
-  userDetailsView: {
-    alignItems: 'center',
-  },
-  button: {
-    marginRight:5,
-    marginLeft:5,
-    paddingLeft:5,
-    paddingRight:5,
-    paddingTop:15,
-    paddingBottom:15,
-    backgroundColor:'white',
-    borderRadius:0,
-    borderWidth: 1,
-    borderColor: 'rgb(22,146,77)'
-  },
-  selectedButton: {
-    backgroundColor:'rgb(22,146,77)',
-  },
-  unSelectedButton: {
-    backgroundColor:'white',
-  },
-  buttonText:{
-    color: 'rgb(22,146,77)'
-  },
-  selectedButtonText:{
-    color: 'white'
-  }
 
 });
 module.exports = ListItem;

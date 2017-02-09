@@ -47,9 +47,9 @@ class PlayersListPage extends Component {
 
   getUsersWithUnkwonStatus(allUsers, eventUsers){
     var unknownStatusUsers = Object.keys(allUsers).reduce(function (filtered, key) {
-        if (eventUsers == null || eventUsers[key] == null) filtered[key] = allUsers[key];
+        if (eventUsers == null || eventUsers[key] == null) filtered.push(allUsers[key]);
         return filtered;
-    }, {});
+    }, []);
 
     return unknownStatusUsers;
   }

@@ -72,10 +72,8 @@ class PlayersListPage extends Component {
               var eventId = Object.keys(snap.val())[0];
               var eventData = snap.val()[eventId];
 
-              // Create sectionsData
+              // Create sectionsData the key order will be the sections order in the list view
               var sectionsData = {Attending:[], "Not Attending":[], Maybe:[]};
-
-              var sectionsData = {};
 
               // Reset Counters
               var attendingCount = 0;
@@ -84,21 +82,12 @@ class PlayersListPage extends Component {
                 Object.keys(eventData['users']).forEach((user)=> {
                   if (eventData['users'][user].attending == "Attending" || eventData['users'][user].attending == "Attending + Carpool" ) {
                     attendingCount++;//TODO: delete attendingCount
-                    if (sectionsData['Attending'] == null){
-                      sectionsData['Attending'] = [];
-                    }
                     sectionsData['Attending'].push(eventData['users'][user]);
                   }
                   else if (eventData['users'][user].attending == "Not Attending"){
-                    if (sectionsData['Not Attending'] == null){
-                      sectionsData['Not Attending'] = [];
-                    }
                     sectionsData['Not Attending'].push(eventData['users'][user]);
                   }
                   else{
-                    if (sectionsData['Maybe'] == null){
-                      sectionsData['Maybe'] = [];
-                    }
                     sectionsData['Maybe'].push(eventData['users'][user]);
                   }
                 })
@@ -106,7 +95,12 @@ class PlayersListPage extends Component {
 
               sectionsData['Pending'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
 
-
+              // Delete empty keys from the Dictionary, because it causes a warning
+              for(var key in sectionsData) {
+                if(sectionsData[key].length == 0) {
+                  delete sectionsData[key];
+                }
+              }
 
               // Refresh the state and screen
               this.setState({

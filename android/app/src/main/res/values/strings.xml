@@ -1,6 +1,6 @@
 <resources>
 
-    <string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">9qRzmQ3Y9IdNBbIelx1h37feIj_lE1jwmY2vf</string>
+    <string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">codePushKey</string>
 
     <string name="app_name">schwarzly</string>
     <string name="facebook_app_id">1810469412504732</string>

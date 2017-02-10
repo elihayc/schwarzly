@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
-import Dialog from 'react-native-dialog';
+// import Dialog from 'react-native-dialog';
 
 const sharedStyles = require('../styles/styles.js')
 const { Platform, StyleSheet, View, Image, Button, TouchableOpacity, Text } = ReactNative;
@@ -8,13 +8,15 @@ const { Platform, StyleSheet, View, Image, Button, TouchableOpacity, Text } = Re
 
 class ListItem extends Component {
 
+  // constructor(props) {
+  //   super(props);
+  // }
+
   _getUserStatusLine()
   {
-    var defaultText = "What's in your mind?";
-    return (this.props.user.statusLine == null && this.props.user.attending != null) ?
-      (<Text style={{color: "gray"}}>{defaultText}</Text>) :
-      (<Text style={{color: "gray"}}>{this.props.user.statusLine}</Text>);
-
+    return (this.props.user.userStatusLine == null) ?
+      null :
+      (<Text style={{color: "gray"}}>{this.props.user.userStatusLine}</Text>);
   }
 
   _buttonTextClass(buttonValue){
@@ -26,6 +28,9 @@ class ListItem extends Component {
       case "Attending":
         return require("../../resources/football.png");
         break;
+      case "Attending + Carpool":
+          return require("../../resources/car.png");
+          break;
       case "Not Attending":
         return require("../../resources/house.png");
         break;
@@ -34,36 +39,55 @@ class ListItem extends Component {
     }
 
   }
-
-  _showStatusLineAlert(){
-    Dialog.prompt(this.props.user.firstName +" " + this.props.user.lastName  , "what's on your mind?", [
-        {text: 'OK', onPress: (promptValue)=> this.props.onStatusLineChange(this.props.user,promptValue), style: 'default'},
-        {text: 'Cancel', onPress: null, style: 'destructive'},
-      ]  ,
-      undefined
-    );
+  _disabledStyle(isDisabled){
+    return isDisabled ? styles.liDisabled : styles.liEnabled;
   }
-  _showAttendingAlert(){
-    var arr = ["Attending", "Not Attending", "Clear"];
 
-    Dialog.showActionSheetWithOptions({
-                    options: arr,
-                    cancelButtonIndex: arr.length - 1,
-                    destructiveButtonIndex: arr.length - 1,
-                },
-                (buttonIndex) => {
-                    this.props.onAttendingChange(this.props.user, arr[buttonIndex]);
-                });
-  }
+  // _showStatusLineAlert(){
+  //   Dialog.prompt(this.props.user.firstName +" " + this.props.user.lastName  , "what's on your mind?", [
+  //       {text: 'OK', onPress: (promptValue)=> this.props.onStatusLineChange(this.props.user,promptValue), style: 'default'},
+  //       {text: 'Cancel', onPress: null, style: 'destructive'},
+  //     ]  ,
+  //     undefined
+  //   );
+  // }
+
+  // _showAttendingAlert(){
+  //   var arr = ["Attending", "Not Attending", "Clear"];
+  //
+  //   Dialog.showActionSheetWithOptions({
+  //                   options: arr,
+  //                   cancelButtonIndex: arr.length - 1,
+  //                   destructiveButtonIndex: arr.length - 1,
+  //               },
+  //               (buttonIndex) => {
+  //                   this.props.onAttendingChange(this.props.user, arr[buttonIndex]);
+  //               });
+  // }
+
+  // _renderEditButton()
+  // {
+  //   if (this.props.disabled){
+  //     return null;
+  //   }
+  //   else {
+  //     return (<Button onPress={()=> this.props.onEditPressed(this.props.user)} style={styles.btn} title={'edit'} />)
+  //   }
+  // }
+
 
   // <TouchableOpacity onPress={()=> this._showStatusLineAlert()} >
   //   {this._getUserStatusLine()}
   // </TouchableOpacity>
+
+  // {this._renderEditButton()}
+
+  // <TouchableOpacity onPress={()=> this._showAttendingAlert()} disabled={this.props.disabled} >
   render() {
     return (
-      <TouchableOpacity onPress={()=> this._showAttendingAlert()} >
+      <TouchableOpacity onPress={()=> this.props.onEditPressed()} disabled={this.props.disabled} >
 
-        <View style={styles.li}>
+        <View style={[styles.li, this._disabledStyle(this.props.disabled)]}>
 
             <View style={styles.leftView}>
                   <Image
@@ -74,6 +98,7 @@ class ListItem extends Component {
 
             <View style={styles.centerView}>
               <Text style={styles.liText}>{this.props.user.firstName} {this.props.user.lastName}</Text>
+              {this._getUserStatusLine()}
             </View>
 
             <View style={styles.rightView}>
@@ -84,7 +109,6 @@ class ListItem extends Component {
             </View>
         </View>
       </TouchableOpacity>
-
     );
   }
 }
@@ -92,14 +116,20 @@ class ListItem extends Component {
 var styles = StyleSheet.create({
   li: {
     flexDirection:'row',
-    backgroundColor: '#fff',
-    borderBottomColor: '#DDDDDD',
     borderColor: 'transparent',
     borderWidth: 1,
     paddingLeft: 10,
     paddingTop: 10,
     paddingBottom: 10,
     paddingRight: 10
+  },
+  liDisabled:{
+    backgroundColor: '#fff',
+    borderBottomColor: '#DDDDDD',
+  },
+  liEnabled:{
+    backgroundColor: '#adbcab',
+    borderBottomColor: '#adbcab',
   },
   leftView: {
     flexDirection: 'row',

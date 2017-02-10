@@ -8,21 +8,23 @@ import {
   Text,
   ListView,
   TouchableHighlight,
+  Button
 } from 'react-native'
 
 // Using for date format
 import moment from 'moment';
 
 import FireBaseManager from './../BL/FireBaseManager.js'
+import FBManager from './../BL/FBManager.js'
+import Dialog from 'react-native-dialog';
 
-const FBSDK = require('react-native-fbsdk');
-const {
-  LoginButton
-} = FBSDK;
+
+var Modal   = require('react-native-modalbox');
 
 const StatusBar = require('./components/StatusBar');
 const ListItem = require('./components/ListItem');
 const SectionHeader = require('./components/SectionHeader');
+const EditUserView = require('./components/EditUserView');
 
 
 class PlayersListPage extends Component {
@@ -37,6 +39,12 @@ class PlayersListPage extends Component {
     this.state = {dataSource: ds};
 
     this.fireBaseMgr = new FireBaseManager();
+    this.fbManager = new FBManager();
+
+    this.fbManager.getUserId().then(
+      (userId) => {
+        this.state.userId = userId;
+      });
   }
 
   componentDidMount() {
@@ -67,19 +75,30 @@ class PlayersListPage extends Component {
               // Create sectionsData
               var sectionsData = {Attending:[], "Not Attending":[], Maybe:[]};
 
+              var sectionsData = {};
+
               // Reset Counters
               var attendingCount = 0;
 
               if (eventData['users'] != null){
                 Object.keys(eventData['users']).forEach((user)=> {
-                  if (eventData['users'][user].attending == "Attending") {
+                  if (eventData['users'][user].attending == "Attending" || eventData['users'][user].attending == "Attending + Carpool" ) {
                     attendingCount++;//TODO: delete attendingCount
+                    if (sectionsData['Attending'] == null){
+                      sectionsData['Attending'] = [];
+                    }
                     sectionsData['Attending'].push(eventData['users'][user]);
                   }
                   else if (eventData['users'][user].attending == "Not Attending"){
+                    if (sectionsData['Not Attending'] == null){
+                      sectionsData['Not Attending'] = [];
+                    }
                     sectionsData['Not Attending'].push(eventData['users'][user]);
                   }
                   else{
+                    if (sectionsData['Maybe'] == null){
+                      sectionsData['Maybe'] = [];
+                    }
                     sectionsData['Maybe'].push(eventData['users'][user]);
                   }
                 })
@@ -87,10 +106,13 @@ class PlayersListPage extends Component {
 
               sectionsData['Pending'] = this.getUsersWithUnkwonStatus(this.users, eventData['users']);
 
+
+
               // Refresh the state and screen
               this.setState({
                 dataSource: this.state.dataSource.cloneWithRowsAndSections(sectionsData),
                 eventDate: eventData['date'],
+                eventUsers: eventData['users'],
                 eventId: eventId,
                 attendingCount: attendingCount
               });
@@ -98,31 +120,73 @@ class PlayersListPage extends Component {
       });
   }
 
-  setAttending(user, attendingStatus){
+  setAttendingAndStatusLine(user, attendingStatus, userSatusLine){
+
+    this.setState({isOpen: false});
+
     // Delete Pending users
-    if (attendingStatus == "Delete"){
+    if (attendingStatus == "Clear"){
       this.fireBaseMgr.deleteUserFromEvent(this.state.eventId, user);
     }
     else{
       var cloneUser = update(user, {$merge:{'attending':attendingStatus}});
-      // cloneUser.userSatusLine = userSatusLine;
+      if (userSatusLine != null){
+        cloneUser.userStatusLine = userSatusLine;
+      }
 
       this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
     }
   }
 
-  setUserStatusLine(user, statusLine)
-  {
-    var cloneUser = update(user, {$merge:{'statusLine':statusLine}});
+  // setUserStatusLine(user, statusLine)
+  // {
+  //   var cloneUser = update(user, {$merge:{'statusLine':statusLine}});
+  //
+  //   this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
+  // }
 
-    this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
+  logout()
+  {
+    var arr = ["Log Out", "Cancel"];
+
+    Dialog.showActionSheetWithOptions({
+                    options: arr,
+                    cancelButtonIndex: arr.length - 1,
+                    destructiveButtonIndex: arr.length - 1,
+                },
+                (buttonIndex) => {
+                  if (buttonIndex == 0){
+                    this.fbManager.logout();
+                    this.props.onLogedOut(false)
+                  }
+                });
+  }
+
+  getCurrentUser(){
+    // Get the User from the Users table
+    var user = (this.state.userId) == null ? null : this.users[this.state.userId];
+
+    if (user != null){
+      // Override the user if he exist in the current event - the event extends the user attending status.
+      if (this.state.eventUsers != null && this.state.eventUsers[this.state.userId] != null){
+          user = this.state.eventUsers[this.state.userId];
+      }
+    }
+    return user;
+  }
+
+  titleText(){
+    return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
+  }
+
+  openEditModal(user) {
+    this.setState({isOpen: true});
   }
 
   _renderItem(user) {
     return (
       <ListItem user={user}
-          onAttendingChange={this.setAttending.bind(this)}
-          onStatusLineChange={this.setUserStatusLine.bind(this)} />
+          disabled={true} />
     );
   }
   _renderSectionHeader(sectionData, category){
@@ -130,16 +194,26 @@ class PlayersListPage extends Component {
       <SectionHeader sectionData={sectionData} category={category} />
     );
   }
+  _renderCurrentUserStatus(){
+    var user = this.getCurrentUser();
 
-  titleText(){
-    return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
+    if (user != null){
+      return (
+        <ListItem user={user}
+            disabled={false}
+            onEditPressed={this.openEditModal.bind(this)}
+        />
+      );
+    }
+    else {
+      return null;
+    }
   }
 
   render(){
-
     return(
       <View style={styles.container}>
-        <StatusBar title={this.titleText()}  />
+        <StatusBar title={this.titleText()} menuPressed={this.logout.bind(this)} />
 
         <ListView dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
@@ -147,11 +221,16 @@ class PlayersListPage extends Component {
           style={styles.listView}
         />
 
-        <View style={styles.logoutButton}>
-          <LoginButton
-            onLogoutFinished={() => this.props.onLogedOut(false)}
-          />
+
+        <View style={styles.footer}>
+          {this._renderCurrentUserStatus()}
         </View>
+
+        <Modal style={{height: 300}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
+          <EditUserView user={this.getCurrentUser()}
+              onEditCompleted={this.setAttendingAndStatusLine.bind(this)} />
+        </Modal>
+
       </View>
     );
   }
@@ -171,14 +250,12 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch'
   },
-  logoutButton:{
-    flex: 0.1,
-    alignItems: 'center',
+  footer:{
+    flexDirection: 'column',
+    backgroundColor: '#16924D',
   },
   button: {
-    height: 36,
-    flex: 1,
-    flexDirection: 'row',
+    height: 20,
     backgroundColor: '#48BBEC',
     borderColor: '#48BBEC',
     borderWidth: 1,
@@ -188,7 +265,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 14,
     color: 'white',
     alignSelf: 'center'
   },

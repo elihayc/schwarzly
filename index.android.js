@@ -49,8 +49,8 @@ class schwarzly extends Component {
 
   render() {
     console.log("render main screen");
-    console.log(AccessToken.getCurrentAccessToken().toString());
-    console.log(AccessToken.u);
+    // console.log(AccessToken.getCurrentAccessToken().toString());
+
     if (this.state.isLoading){
         AccessToken.getCurrentAccessToken().then(
                       (data) => {

@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import ReactNative from 'react-native';
 const { Platform, StyleSheet, Text, View, TouchableHighlight, Image} = ReactNative;
 
+import renderIf from './../../helpers/renderif.js'
+
 class StatusBar extends Component {
 
   render() {
@@ -18,6 +20,14 @@ class StatusBar extends Component {
           <View style={styles.titleView}>
             <Text style={styles.navbarTitle}>{this.props.title}</Text>
           </View>
+
+          {renderIf(this.props.isAdminUser)(
+          <TouchableHighlight
+          onPress={() => this.props.editOthersPressed()}>
+          <Image style={{height: 20,width: 20, marginRight:5}} source= {require("../../resources/edit.png")} />
+          </TouchableHighlight>
+          )}
+
         </View>
       </View>
     );

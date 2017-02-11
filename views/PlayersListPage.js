@@ -36,7 +36,7 @@ class PlayersListPage extends Component {
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2
     });
 
-    this.state = {dataSource: ds};
+    this.state = {dataSource: ds, editOthers:false};
 
     this.fireBaseMgr = new FireBaseManager();
     this.fbManager = new FBManager();
@@ -48,9 +48,7 @@ class PlayersListPage extends Component {
   }
 
   componentDidMount() {
-    // this.listenForItems(this.fireBaseMgr.usersRef);
-    var eventAfterDate = moment(new Date()).format('YYYY-MM-DD');
-    this.loadUsersAndListenForEvents(eventAfterDate);
+    this.loadDataSource();
   }
 
   getUsersWithUnkwonStatus(allUsers, eventUsers){
@@ -62,7 +60,15 @@ class PlayersListPage extends Component {
     return unknownStatusUsers;
   }
 
+  loadDataSource(){
+    var eventAfterDate = moment(new Date()).format('YYYY-MM-DD');
+    this.loadUsersAndListenForEvents(eventAfterDate);
+  }
+
   loadUsersAndListenForEvents(eventAfterDate){
+ //???????????????????????TODO - debug
+      eventAfterDate = '2017-03-01';
+
       // Load all users once
       this.fireBaseMgr.usersRef.once('value',(snap) =>{
           this.users = snap.val();
@@ -132,6 +138,12 @@ class PlayersListPage extends Component {
     }
   }
 
+  editOthersPressed(){
+    var newValue = !this.state.editOthers;
+    this.setState({editOthers:newValue})
+
+    this.loadDataSource();
+  }
   // setUserStatusLine(user, statusLine)
   // {
   //   var cloneUser = update(user, {$merge:{'statusLine':statusLine}});
@@ -173,18 +185,25 @@ class PlayersListPage extends Component {
     return (user != null && user.admin == true);
   }
 
+
   titleText(){
     return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
   }
 
   openEditModal(user) {
-    this.setState({isOpen: true});
+    this.setState({editUser:user, isOpen: true});
+  }
+
+  closeEditModal(user) {
+    this.setState({isOpen: false});
   }
 
   _renderItem(user) {
     return (
       <ListItem user={user}
-          disabled={true} />
+          disabled={!this.state.editOthers}
+          onEditPressed={this.openEditModal.bind(this)}
+      />
     );
   }
   _renderSectionHeader(sectionData, category){
@@ -211,7 +230,9 @@ class PlayersListPage extends Component {
   render(){
     return(
       <View style={styles.container}>
-        <StatusBar title={this.titleText()} menuPressed={this.logout.bind(this)} />
+        <StatusBar title={this.titleText()} menuPressed={this.logout.bind(this)}
+          isAdminUser={this.isAdminUser(this.getCurrentUser())} editOthersPressed={this.editOthersPressed.bind(this)}
+        />
 
         <ListView dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
@@ -224,8 +245,11 @@ class PlayersListPage extends Component {
           {this._renderCurrentUserStatus()}
         </View>
 
-        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 350:320}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
-          <EditUserView user={this.getCurrentUser()} isAdminUser={this.isAdminUser(this.getCurrentUser())}
+        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 350:300}}
+                backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}
+                onClosed={() => this.closeEditModal()}
+        >
+          <EditUserView user={this.state.editUser} isAdminUser={this.isAdminUser(this.getCurrentUser())}
               onEditCompleted={this.setAttendingAndStatusLine.bind(this)} />
         </Modal>
 
@@ -250,7 +274,6 @@ var styles = StyleSheet.create({
   },
   footer:{
     flexDirection: 'column',
-    backgroundColor: '#16924D',
   },
   button: {
     height: 20,

@@ -27,8 +27,8 @@ var styles = StyleSheet.create({
   sectionHeaderText:{
     fontWeight: "700",
     fontSize: 16,
+    color: '#666666',
     padding:5
-
   }
 });
 

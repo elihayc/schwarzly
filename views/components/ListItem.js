@@ -85,7 +85,7 @@ class ListItem extends Component {
   // <TouchableOpacity onPress={()=> this._showAttendingAlert()} disabled={this.props.disabled} >
   render() {
     return (
-      <TouchableOpacity onPress={()=> this.props.onEditPressed()} disabled={this.props.disabled} >
+      <TouchableOpacity onPress={()=> this.props.onEditPressed(this.props.user)} disabled={this.props.disabled} >
 
         <View style={[styles.li, this._disabledStyle(this.props.disabled)]}>
 
@@ -128,7 +128,7 @@ var styles = StyleSheet.create({
     borderBottomColor: '#DDDDDD',
   },
   liEnabled:{
-    backgroundColor: '#adbcab',
+    backgroundColor: '#cccccc',
     borderBottomColor: '#adbcab',
   },
   leftView: {

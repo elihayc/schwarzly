@@ -220,7 +220,7 @@ class PlayersListPage extends Component {
           {this._renderCurrentUserStatus()}
         </View>
 
-        <Modal style={{height: 300}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
+        <Modal style={{height: 315}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
           <EditUserView user={this.getCurrentUser()}
               onEditCompleted={this.setAttendingAndStatusLine.bind(this)} />
         </Modal>

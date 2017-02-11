@@ -24,7 +24,6 @@ class EditUserView extends Component {
         <View style={styles.WhatsInYourMindView}>
           <Text style={styles.WhatsInYourMindTitle} >{this.getWhatsInYourMindTitle()}</Text>
 
-
           <TextInput
             style={styles.WhatsInYourMindInput}
             maxLength = {50}
@@ -105,7 +104,7 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   WhatsInYourMindView:{
-    alignItems: 'center',
+    alignItems: 'stretch',
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
@@ -114,14 +113,14 @@ var styles = StyleSheet.create({
     fontWeight: "300",
   },
   WhatsInYourMindInput:{
-    
-    height: 20,
-    width:280,
+    height: 35,
     marginTop:10,
     marginBottom:10,
     borderColor: 'grey',
     borderWidth: 1,
     fontSize: 16,
+    paddingVertical: 0,
+
   },
   allButtonsView:{
 

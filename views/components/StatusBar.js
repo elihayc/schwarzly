@@ -14,19 +14,21 @@ class StatusBar extends Component {
         <View style={styles.navbar}>
 
           <TouchableHighlight style={styles.menuView} onPress={() => this.props.menuPressed()}>
-            <Image style={styles.menuImage} source= {require("../../resources/menu.png")} />
+            <Image style={styles.menuImage} source= {require("../../resources/logout.png")} />
           </TouchableHighlight>
 
           <View style={styles.titleView}>
             <Text style={styles.navbarTitle}>{this.props.title}</Text>
           </View>
 
-          {renderIf(this.props.isAdminUser)(
-          <TouchableHighlight
-          onPress={() => this.props.editOthersPressed()}>
-          <Image style={{height: 20,width: 20, marginRight:5}} source= {require("../../resources/edit.png")} />
-          </TouchableHighlight>
-          )}
+          <View style={styles.editButtonView} >
+              {renderIf(this.props.isAdminUser)(
+              <TouchableHighlight
+              onPress={() => this.props.editOthersPressed()}>
+              <Image style={{height: 30,width: 30}} source= {require("../../resources/edit.png")} />
+              </TouchableHighlight>
+              )}
+          </View>
 
         </View>
       </View>
@@ -59,15 +61,23 @@ var styles = StyleSheet.create({
   },
   menuView:{
     height: 50,
-    width: 50
+    width: 50,
+    alignItems: 'flex-start',
+    justifyContent: 'center'
+  },
+  menuImage:{
+    height: 25,
+    width: 25,
+    marginLeft: 10
+  },
+  editButtonView:{
+    height: 50,
+    width: 50,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   titleView:{
     flex:1,
-    paddingRight:50
-  },
-  menuImage:{
-    height: 50,
-    width: 50
   },
   navbarTitle: {
     color: '#ffffff',

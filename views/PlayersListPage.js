@@ -66,8 +66,8 @@ class PlayersListPage extends Component {
   }
 
   loadUsersAndListenForEvents(eventAfterDate){
- //???????????????????????TODO - debug
-      eventAfterDate = '2017-03-01';
+      ///TODO - debug trick !!!!!!
+      ///eventAfterDate = '2017-03-01';
 
       // Load all users once
       this.fireBaseMgr.usersRef.once('value',(snap) =>{

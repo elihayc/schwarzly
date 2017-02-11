@@ -169,6 +169,10 @@ class PlayersListPage extends Component {
     return user;
   }
 
+  isAdminUser(user){
+    return (user != null && user.admin == true);
+  }
+
   titleText(){
     return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
   }
@@ -220,8 +224,8 @@ class PlayersListPage extends Component {
           {this._renderCurrentUserStatus()}
         </View>
 
-        <Modal style={{height: 315}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
-          <EditUserView user={this.getCurrentUser()}
+        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 350:320}} backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}>
+          <EditUserView user={this.getCurrentUser()} isAdminUser={this.isAdminUser(this.getCurrentUser())}
               onEditCompleted={this.setAttendingAndStatusLine.bind(this)} />
         </Modal>
 

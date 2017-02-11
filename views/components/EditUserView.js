@@ -1,7 +1,12 @@
 'use strict';
 import React, {Component} from 'react';
 import ReactNative from 'react-native';
+
+import renderIf from './../../helpers/renderif.js'
+
 const { Platform, StyleSheet, Text, TextInput, View, Image, TouchableHighlight} = ReactNative;
+
+
 
 class EditUserView extends Component {
   constructor(props) {
@@ -39,7 +44,7 @@ class EditUserView extends Component {
             <View style={styles.button}>
               <Text style={styles.buttonText} >Attending</Text>
                 <Image
-                    style={{width: 50, height: 50, borderRadius: 0}}
+                    style={styles.buttonImage}
                     source={require("../../resources/football.png")}
                 />
             </View>
@@ -50,7 +55,7 @@ class EditUserView extends Component {
             <View style={styles.button}>
               <Text style={styles.buttonText} >Attending + Carpool</Text>
               <Image
-                  style={{width: 50, height: 50, borderRadius: 0}}
+                  style={styles.buttonImage}
                   source={require("../../resources/car.png")}
               />
             </View>
@@ -61,12 +66,13 @@ class EditUserView extends Component {
             <View style={styles.button}>
               <Text style={styles.buttonText} >Not Attending</Text>
               <Image
-                  style={{width: 50, height: 50, borderRadius: 0}}
+                  style={styles.buttonImage}
                   source={require("../../resources/house.png")}
               />
             </View>
           </TouchableHighlight>
 
+          {renderIf(this.props.isAdminUser)(
           <TouchableHighlight
           onPress={() => this.props.onEditCompleted(this.props.user, "Clear", this.state.WhatsInYourMindText)}>
             <View style={styles.button}>
@@ -74,6 +80,7 @@ class EditUserView extends Component {
 
             </View>
           </TouchableHighlight>
+          )}
 
         </View>
 
@@ -133,12 +140,19 @@ var styles = StyleSheet.create({
     borderWidth: 2,
     marginBottom: 4,
     paddingRight:15,
-    paddingLeft:15
+    paddingLeft:15,
+    borderRadius: 10
   },
   buttonText: {
     color: '#333',
     fontSize: 20,
   },
+  buttonImage:{
+    width: 40,
+    height: 40,
+    marginTop:5,
+    marginBottom:5
+  }
 
 });
 

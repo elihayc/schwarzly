@@ -14,7 +14,7 @@ class ListItem extends Component {
 
   _getUserStatusLine()
   {
-    return (this.props.user.userStatusLine == null) ?
+    return (this.props.user.userStatusLine == null || this.props.user.userStatusLine == '') ?
       null :
       (<Text style={{color: "gray"}}>{this.props.user.userStatusLine}</Text>);
   }

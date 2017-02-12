@@ -144,12 +144,6 @@ class PlayersListPage extends Component {
 
     this.loadDataSource();
   }
-  // setUserStatusLine(user, statusLine)
-  // {
-  //   var cloneUser = update(user, {$merge:{'statusLine':statusLine}});
-  //
-  //   this.fireBaseMgr.setUserInEvent(this.state.eventId, cloneUser);
-  // }
 
   logout()
   {
@@ -185,7 +179,6 @@ class PlayersListPage extends Component {
     return (user != null && user.admin == true);
   }
 
-
   titleText(){
     return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
   }
@@ -211,6 +204,7 @@ class PlayersListPage extends Component {
       <SectionHeader sectionData={sectionData} category={category} />
     );
   }
+  
   _renderCurrentUserStatus(){
     var user = this.getCurrentUser();
 

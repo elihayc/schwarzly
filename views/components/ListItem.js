@@ -43,46 +43,6 @@ class ListItem extends Component {
     return isDisabled ? styles.liDisabled : styles.liEnabled;
   }
 
-  // _showStatusLineAlert(){
-  //   Dialog.prompt(this.props.user.firstName +" " + this.props.user.lastName  , "what's on your mind?", [
-  //       {text: 'OK', onPress: (promptValue)=> this.props.onStatusLineChange(this.props.user,promptValue), style: 'default'},
-  //       {text: 'Cancel', onPress: null, style: 'destructive'},
-  //     ]  ,
-  //     undefined
-  //   );
-  // }
-
-  // _showAttendingAlert(){
-  //   var arr = ["Attending", "Not Attending", "Clear"];
-  //
-  //   Dialog.showActionSheetWithOptions({
-  //                   options: arr,
-  //                   cancelButtonIndex: arr.length - 1,
-  //                   destructiveButtonIndex: arr.length - 1,
-  //               },
-  //               (buttonIndex) => {
-  //                   this.props.onAttendingChange(this.props.user, arr[buttonIndex]);
-  //               });
-  // }
-
-  // _renderEditButton()
-  // {
-  //   if (this.props.disabled){
-  //     return null;
-  //   }
-  //   else {
-  //     return (<Button onPress={()=> this.props.onEditPressed(this.props.user)} style={styles.btn} title={'edit'} />)
-  //   }
-  // }
-
-
-  // <TouchableOpacity onPress={()=> this._showStatusLineAlert()} >
-  //   {this._getUserStatusLine()}
-  // </TouchableOpacity>
-
-  // {this._renderEditButton()}
-
-  // <TouchableOpacity onPress={()=> this._showAttendingAlert()} disabled={this.props.disabled} >
   render() {
     return (
       <TouchableOpacity onPress={()=> this.props.onEditPressed(this.props.user)} disabled={this.props.disabled} >

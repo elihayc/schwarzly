@@ -34,7 +34,7 @@
 			<string>com.schwarzly</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>swrzly</string>
+				<string>schwarzly</string>
 			</array>
 		</dict>
 	</array>

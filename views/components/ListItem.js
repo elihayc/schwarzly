@@ -63,7 +63,7 @@ class ListItem extends Component {
 
             <View style={styles.rightView}>
                 <Image
-                    style={{width: 50, height: 50, borderRadius: 0}}
+                    style={{width: 35, height: 35, borderRadius: 0}}
                     source={this._getStatusIconUri(this.props.user.attending)}
                 />
             </View>
@@ -107,7 +107,7 @@ var styles = StyleSheet.create({
     flexDirection:'row',
     flex: 0.2,
     justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   liText: {
     color: '#333',

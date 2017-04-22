@@ -195,6 +195,7 @@ class PlayersListPage extends Component {
     return (
       <ListItem user={user}
           disabled={!this.state.editOthers}
+          noBorder = {false}
           onEditPressed={this.openEditModal.bind(this)}
       />
     );
@@ -212,6 +213,7 @@ class PlayersListPage extends Component {
       return (
         <ListItem user={user}
             disabled={false}
+            noBorder = {true}
             onEditPressed={this.openEditModal.bind(this)}
         />
       );
@@ -228,16 +230,15 @@ class PlayersListPage extends Component {
           isAdminUser={this.isAdminUser(this.getCurrentUser())} editOthersPressed={this.editOthersPressed.bind(this)}
         />
 
+        <View style={styles.currentUserBox}>
+          {this._renderCurrentUserStatus()}
+        </View>
+
         <ListView dataSource={this.state.dataSource}
           renderRow={this._renderItem.bind(this)}
           renderSectionHeader={this._renderSectionHeader}
           style={styles.listView}
         />
-
-
-        <View style={styles.footer}>
-          {this._renderCurrentUserStatus()}
-        </View>
 
         <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 350:300}}
                 backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}
@@ -266,7 +267,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch'
   },
-  footer:{
+  currentUserBox:{
     flexDirection: 'column',
   },
   button: {

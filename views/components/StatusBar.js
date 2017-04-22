@@ -52,7 +52,7 @@ var styles = StyleSheet.create({
   navbar: {
     alignItems: 'center',
     backgroundColor: '#16924D',
-    borderBottomColor: '#eee',
+    borderBottomColor: '#adbcab',
     borderColor: 'transparent',
     borderWidth: 1,
     justifyContent: 'flex-start',

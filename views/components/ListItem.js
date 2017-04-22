@@ -43,11 +43,15 @@ class ListItem extends Component {
     return isDisabled ? styles.liDisabled : styles.liEnabled;
   }
 
+  _borderStyle(isNoBorder){
+    return isNoBorder ? styles.liNoBorder : styles.liBorder;
+  }
+
   render() {
     return (
       <TouchableOpacity onPress={()=> this.props.onEditPressed(this.props.user)} disabled={this.props.disabled} >
 
-        <View style={[styles.li, this._disabledStyle(this.props.disabled)]}>
+        <View style={[styles.li, this._disabledStyle(this.props.disabled), this._borderStyle(this.props.noBorder)]}>
 
             <View style={styles.leftView}>
                   <Image
@@ -90,6 +94,12 @@ var styles = StyleSheet.create({
   liEnabled:{
     backgroundColor: '#cccccc',
     borderBottomColor: '#adbcab',
+  },
+  liBorder:{
+    borderWidth: 1,
+  },
+  liNoBorder:{
+    borderWidth: 0,
   },
   leftView: {
     flexDirection: 'row',

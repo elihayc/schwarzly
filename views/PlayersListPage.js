@@ -188,7 +188,10 @@ class PlayersListPage extends Component {
     return (this.state.eventDate != null) ? this.state.eventDate : 'loading'
   }
   subtitleText(){
-    return (this.state.eventDate != null) ? this.state.attendingCount + " players" : 'please wait...'
+    return (this.state.eventDate == null) ? 'please wait...' :
+                (this.state.attendingCount == 1) ? this.state.attendingCount + " player" :
+                 this.state.attendingCount + " players"
+
 
   }
 

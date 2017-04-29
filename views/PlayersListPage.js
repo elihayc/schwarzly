@@ -79,7 +79,7 @@ class PlayersListPage extends Component {
               var eventData = snap.val()[eventId];
 
               // Create sectionsData the key order will be the sections order in the list view
-              var sectionsData = {Attending:[], "Not Attending":[], Maybe:[]};
+              var sectionsData = {Attending:[], Maybe:[], "Not Attending":[], Pending:[]};
 
               // Reset Counters
               var attendingCount = 0;
@@ -93,9 +93,13 @@ class PlayersListPage extends Component {
                   else if (eventData['users'][user].attending == "Not Attending"){
                     sectionsData['Not Attending'].push(eventData['users'][user]);
                   }
-                  else{
+                  else if (eventData['users'][user].attending == "Maybe"){
                     sectionsData['Maybe'].push(eventData['users'][user]);
                   }
+                  else{
+                    sectionsData['Pending'].push(eventData['users'][user]);
+                  }
+
                   attendingCount += eventData['users'][user].friendsCount;
                 })
               }
@@ -245,7 +249,7 @@ class PlayersListPage extends Component {
           style={styles.listView}
         />
 
-        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 390:340}}
+        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 450:400}}
                 backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}
                 onClosed={() => this.closeEditModal()}
         >

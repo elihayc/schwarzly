@@ -35,6 +35,9 @@ class ListItem extends Component {
       case "Attending + Carpool":
           return require("../../resources/car.png");
           break;
+      case "Maybe":
+          return require("../../resources/question.png");
+          break;
       case "Not Attending":
         return require("../../resources/house.png");
         break;

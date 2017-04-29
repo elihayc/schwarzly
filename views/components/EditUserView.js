@@ -32,6 +32,7 @@ class EditUserView extends Component {
             <Text style={styles.textboxTitle} >{this.getWhatsInYourMindTitle()}</Text>
 
             <TextInput
+            underlineColorAndroid="transparent"
               style={styles.WhatsInYourMindInput}
               maxLength = {50}
               onChangeText={(text) => this.setState({WhatsInYourMindText:text})}
@@ -91,6 +92,18 @@ class EditUserView extends Component {
                 <Image
                     style={styles.buttonImage}
                     source={require("../../resources/house.png")}
+                />
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            onPress={() => this.props.onEditCompleted(this.props.user, "Maybe", this.state.WhatsInYourMindText,
+                                                      this.state.friendsCount)}>
+              <View style={styles.button}>
+                <Text style={styles.buttonText} >Maybe</Text>
+                <Image
+                    style={styles.buttonImage}
+                    source={require("../../resources/question.png")}
                 />
               </View>
             </TouchableOpacity>
@@ -155,20 +168,10 @@ var styles = StyleSheet.create({
     marginBottom:10,
     paddingLeft:5,
     borderColor: 'grey',
-    borderWidth: 0,
+    borderWidth: 1,
     fontSize: 16,
     paddingVertical: 0,
     backgroundColor : '#ffffff',
-
-    ...Platform.select({
-      ios: {
-        borderWidth: 1,
-      },
-      android: {
-        borderWidth: 0,
-      },
-    }),
-
   },
   friendsView:{
     alignItems: 'center',
@@ -181,20 +184,11 @@ var styles = StyleSheet.create({
     width: 25,
     marginLeft: 5,
     borderColor: 'grey',
-    borderWidth: 0,
+    borderWidth: 1,
     textAlign: 'center',
     fontSize: 16,
     paddingVertical: 0,
     backgroundColor : '#ffffff',
-
-    ...Platform.select({
-      ios: {
-        borderWidth: 1,
-      },
-      android: {
-        borderWidth: 0,
-      },
-    }),
   },
   allButtonsView:{
 

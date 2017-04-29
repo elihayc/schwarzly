@@ -19,6 +19,7 @@ class StatusBar extends Component {
 
           <View style={styles.titleView}>
             <Text style={styles.navbarTitle}>{this.props.title}</Text>
+            <Text style={styles.navbarSubTitle}>{this.props.subtitle}</Text>
           </View>
 
           <View style={styles.editButtonView} >
@@ -81,7 +82,14 @@ var styles = StyleSheet.create({
   },
   navbarTitle: {
     color: '#ffffff',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: "500",
+    textAlign: 'center',
+    marginBottom: 5
+  },
+  navbarSubTitle: {
+    color: '#ffffff',
+    fontSize: 18,
     fontWeight: "500",
     textAlign: 'center'
   },

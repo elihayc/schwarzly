@@ -87,7 +87,7 @@ class PlayersListPage extends Component {
               if (eventData['users'] != null){
                 Object.keys(eventData['users']).forEach((user)=> {
                   if (eventData['users'][user].attending == "Attending" || eventData['users'][user].attending == "Attending + Carpool" ) {
-                    attendingCount++;//TODO: delete attendingCount
+                    attendingCount++;
                     sectionsData['Attending'].push(eventData['users'][user]);
                   }
                   else if (eventData['users'][user].attending == "Not Attending"){
@@ -96,6 +96,7 @@ class PlayersListPage extends Component {
                   else{
                     sectionsData['Maybe'].push(eventData['users'][user]);
                   }
+                  attendingCount += eventData['users'][user].friendsCount;
                 })
               }
 
@@ -120,7 +121,7 @@ class PlayersListPage extends Component {
       });
   }
 
-  setAttendingAndStatusLine(user, attendingStatus, userSatusLine){
+  setAttendingAndStatusLine(user, attendingStatus, userSatusLine, friendsCount){
 
     this.setState({isOpen: false});
 
@@ -129,7 +130,7 @@ class PlayersListPage extends Component {
       this.fireBaseMgr.deleteUserFromEvent(this.state.eventId, user);
     }
     else{
-      var cloneUser = update(user, {$merge:{'attending':attendingStatus}});
+      var cloneUser = update(user, {$merge:{'attending':attendingStatus, 'friendsCount':friendsCount}});
       if (userSatusLine != null){
         cloneUser.userStatusLine = userSatusLine;
       }
@@ -180,7 +181,11 @@ class PlayersListPage extends Component {
   }
 
   titleText(){
-    return (this.state.eventDate != null) ? this.state.eventDate :'loading...'
+    return (this.state.eventDate != null) ? this.state.eventDate : 'loading'
+  }
+  subtitleText(){
+    return (this.state.eventDate != null) ? this.state.attendingCount + " players" : 'please wait...'
+
   }
 
   openEditModal(user) {
@@ -205,7 +210,7 @@ class PlayersListPage extends Component {
       <SectionHeader sectionData={sectionData} category={category} />
     );
   }
-  
+
   _renderCurrentUserStatus(){
     var user = this.getCurrentUser();
 
@@ -226,7 +231,7 @@ class PlayersListPage extends Component {
   render(){
     return(
       <View style={styles.container}>
-        <StatusBar title={this.titleText()} menuPressed={this.logout.bind(this)}
+        <StatusBar title={this.titleText()} subtitle={this.subtitleText()} menuPressed={this.logout.bind(this)}
           isAdminUser={this.isAdminUser(this.getCurrentUser())} editOthersPressed={this.editOthersPressed.bind(this)}
         />
 
@@ -240,7 +245,7 @@ class PlayersListPage extends Component {
           style={styles.listView}
         />
 
-        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 350:300}}
+        <Modal style={{height: this.isAdminUser(this.getCurrentUser())? 390:340}}
                 backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}
                 onClosed={() => this.closeEditModal()}
         >

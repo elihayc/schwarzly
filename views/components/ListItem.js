@@ -12,11 +12,15 @@ class ListItem extends Component {
   //   super(props);
   // }
 
-  _getUserStatusLine()
-  {
+  _getUserStatusLine(){
     return (this.props.user.userStatusLine == null || this.props.user.userStatusLine == '') ?
       null :
       (<Text style={{color: "gray"}}>{this.props.user.userStatusLine}</Text>);
+  }
+
+  _getfriendsCountText(){
+    return (this.props.user.friendsCount  == null ||
+            this.props.user.friendsCount  == 0) ? '' : this.props.user.friendsCount.toString() + ' + '
   }
 
   _buttonTextClass(buttonValue){
@@ -37,8 +41,8 @@ class ListItem extends Component {
       default:
         return null;
     }
-
   }
+
   _disabledStyle(isDisabled){
     return isDisabled ? styles.liDisabled : styles.liEnabled;
   }
@@ -66,6 +70,7 @@ class ListItem extends Component {
             </View>
 
             <View style={styles.rightView}>
+              <Text style={styles.liText}>{this._getfriendsCountText()}</Text>
                 <Image
                     style={{width: 35, height: 35, borderRadius: 0}}
                     source={this._getStatusIconUri(this.props.user.attending)}

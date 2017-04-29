@@ -12,7 +12,8 @@ class EditUserView extends Component {
   constructor(props) {
     super(props);
     this.state = { WhatsInYourMindText: this.props.user.userStatusLine };
-
+    var friendsCount = (this.props.user.friendsCount != null) ? this.props.user.friendsCount : 0;
+    this.state = { friendsCount: friendsCount };
   }
 
   getWhatsInYourMindTitle(){
@@ -28,7 +29,7 @@ class EditUserView extends Component {
 
         <View style ={styles.bodyView}>
           <View style={styles.WhatsInYourMindView}>
-            <Text style={styles.WhatsInYourMindTitle} >{this.getWhatsInYourMindTitle()}</Text>
+            <Text style={styles.textboxTitle} >{this.getWhatsInYourMindTitle()}</Text>
 
             <TextInput
               style={styles.WhatsInYourMindInput}
@@ -38,9 +39,29 @@ class EditUserView extends Component {
             />
           </View>
 
+          <View style={styles.friendsView}>
+            <Text style={styles.textboxTitle} >{"friends: +"}</Text>
+            <TextInput
+              style={styles.friendsCountInput}
+              maxLength = {1}
+              keyboardType = 'numeric'
+              onChangeText={(text) => {
+                                    var isNum1digit = /^\d$/.test(text);
+                                    if (isNum1digit){
+                                      this.setState({friendsCount:parseInt(text)})
+                                    }else {
+                                      this.setState({friendsCount:0})
+                                    }}
+                           }
+              value={this.state.friendsCount == 0 ? '' : this.state.friendsCount.toString()}
+
+            />
+          </View>
+
           <View style={styles.allButtonsView}>
             <TouchableOpacity
-            onPress={() => this.props.onEditCompleted(this.props.user, "Attending", this.state.WhatsInYourMindText)}>
+            onPress={() => this.props.onEditCompleted(this.props.user, "Attending", this.state.WhatsInYourMindText,
+                                                      this.state.friendsCount)}>
               <View style={styles.button}>
                 <Text style={styles.buttonText} >Attending</Text>
                   <Image
@@ -51,7 +72,8 @@ class EditUserView extends Component {
             </TouchableOpacity>
 
             <TouchableOpacity
-            onPress={() => this.props.onEditCompleted(this.props.user, "Attending + Carpool", this.state.WhatsInYourMindText)}>
+            onPress={() => this.props.onEditCompleted(this.props.user, "Attending + Carpool", this.state.WhatsInYourMindText,
+                                                      this.state.friendsCount)}>
               <View style={styles.button}>
                 <Text style={styles.buttonText} >Attending + Carpool</Text>
                 <Image
@@ -62,7 +84,8 @@ class EditUserView extends Component {
             </TouchableOpacity>
 
             <TouchableOpacity
-            onPress={() => this.props.onEditCompleted(this.props.user, "Not Attending", this.state.WhatsInYourMindText)}>
+            onPress={() => this.props.onEditCompleted(this.props.user, "Not Attending", this.state.WhatsInYourMindText,
+                                                      this.state.friendsCount)}>
               <View style={styles.button}>
                 <Text style={styles.buttonText} >Not Attending</Text>
                 <Image
@@ -74,7 +97,8 @@ class EditUserView extends Component {
 
             {renderIf(this.props.isAdminUser)(
             <TouchableOpacity
-            onPress={() => this.props.onEditCompleted(this.props.user, "Clear", this.state.WhatsInYourMindText)}>
+            onPress={() => this.props.onEditCompleted(this.props.user, "Clear", this.state.WhatsInYourMindText,
+                                                      this.state.friendsCount)}>
               <View style={styles.button}>
                 <Text style={styles.buttonText} >Clear</Text>
 
@@ -120,15 +144,16 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
   },
-  WhatsInYourMindTitle:{
+  textboxTitle:{
     fontSize: 18,
     fontWeight: "300",
-    color: '#666666'
+    color: '#666666',
   },
   WhatsInYourMindInput:{
     height: 35,
     marginTop:10,
     marginBottom:10,
+    paddingLeft:5,
     borderColor: 'grey',
     borderWidth: 0,
     fontSize: 16,
@@ -145,6 +170,32 @@ var styles = StyleSheet.create({
     }),
 
   },
+  friendsView:{
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    height: 35,
+    marginBottom: 10,
+  },
+  friendsCountInput:{
+    width: 25,
+    marginLeft: 5,
+    borderColor: 'grey',
+    borderWidth: 0,
+    textAlign: 'center',
+    fontSize: 16,
+    paddingVertical: 0,
+    backgroundColor : '#ffffff',
+
+    ...Platform.select({
+      ios: {
+        borderWidth: 1,
+      },
+      android: {
+        borderWidth: 0,
+      },
+    }),
+  },
   allButtonsView:{
 
   },
@@ -160,7 +211,6 @@ var styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor : '#dddddd',
     height:50,
-
   },
   buttonText: {
     color: '#333',

@@ -100,7 +100,10 @@ class PlayersListPage extends Component {
                     sectionsData['Pending'].push(eventData['users'][user]);
                   }
 
-                  attendingCount += eventData['users'][user].friendsCount;
+                  if (eventData['users'][user].friendsCount != null){ // friendsCount backward compatibility
+                      attendingCount += eventData['users'][user].friendsCount;
+                  }
+
                 })
               }
 

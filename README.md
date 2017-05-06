@@ -31,7 +31,7 @@ user: git user
 ### Release new version command (copy bundle every version)
 * iOS
 
-		code-push release-react schwarzly ios -d Production
+		code-push release-react schwarzly-iOS ios -d Production
 * Android
 
- 		code-push release-react schwarzly android -d Production    
+ 		code-push release-react schwarzly-Android android -d Production    

@@ -6,6 +6,7 @@ import {
   NavigatorIOS,
   View,
   Text,
+  Button,
 } from 'react-native';
 
 import codePush from "react-native-code-push";
@@ -17,7 +18,8 @@ const {
 
 const LoginPage = require('./views/LoginPage');
 // var LoginFB = require('./views/LoginFB');
-const PlayersListPage = require('./views/PlayersListPage')
+
+const MainContainerPage = require('./views/MainContainerPage')
 
 var styles = StyleSheet.create({
   text: {
@@ -38,7 +40,8 @@ class schwarzly extends Component {
     super(props);
     this.state = {
       isLogedIn: false,
-      isLoading: true
+      isLoading: true,
+      isDrawerOpen: true
     };
   }
 
@@ -49,8 +52,7 @@ class schwarzly extends Component {
 
   render() {
     console.log("render main screen");
-    // console.log(AccessToken.getCurrentAccessToken().toString());
-
+    console.log(AccessToken.getCurrentAccessToken().toString());
     if (this.state.isLoading){
         AccessToken.getCurrentAccessToken().then(
                       (data) => {
@@ -62,7 +64,6 @@ class schwarzly extends Component {
                           // alert("none")
                           this.setState({ isLogedIn: false });
                         }
-
                       });
       this.state.isLoading = false;
     }
@@ -76,15 +77,13 @@ class schwarzly extends Component {
     else if (!this.state.isLogedIn){
       return (
       <View style={styles.container}>
-      <LoginPage onLogedIn={this.updateIsLogedIn.bind(this)} />
+        <LoginPage onLogedIn={this.updateIsLogedIn.bind(this)} />
       </View>
       );
     }
     else {
       return(
-        <View style={styles.container}>
-        <PlayersListPage onLogedOut={this.updateIsLogedIn.bind(this)}/>
-        </View>
+        <MainContainerPage onLogedOut={this.updateIsLogedIn.bind(this)} />
       );
     }
   }

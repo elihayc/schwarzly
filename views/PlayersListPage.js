@@ -16,8 +16,6 @@ import moment from 'moment';
 
 import FireBaseManager from './../BL/FireBaseManager.js'
 import FBManager from './../BL/FBManager.js'
-import Dialog from 'react-native-dialog';
-
 
 var Modal   = require('react-native-modalbox');
 
@@ -153,26 +151,9 @@ class PlayersListPage extends Component {
     this.loadDataSource();
   }
 
-  logout()
-  {
-    var arr = ["Log Out", "Cancel"];
-
-    Dialog.showActionSheetWithOptions({
-                    options: arr,
-                    cancelButtonIndex: arr.length - 1,
-                    destructiveButtonIndex: arr.length - 1,
-                },
-                (buttonIndex) => {
-                  if (buttonIndex == 0){
-                    this.fbManager.logout();
-                    this.props.onLogedOut(false)
-                  }
-                });
-  }
-
   getCurrentUser(){
     // Get the User from the Users table
-    var user = (this.state.userId) == null ? null : this.users[this.state.userId];
+    var user = (this.state.userId) == null || this.users == null ? null : this.users[this.state.userId];
 
     if (user != null){
       // Override the user if he exist in the current event - the event extends the user attending status.
@@ -241,7 +222,7 @@ class PlayersListPage extends Component {
   render(){
     return(
       <View style={styles.container}>
-        <StatusBar title={this.titleText()} subtitle={this.subtitleText()} menuPressed={this.logout.bind(this)}
+        <StatusBar title={this.titleText()} subtitle={this.subtitleText()} menuPressed={() => this.props.openMenu()}
           isAdminUser={this.isAdminUser(this.getCurrentUser())} editOthersPressed={this.editOthersPressed.bind(this)}
         />
 

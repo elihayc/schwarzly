@@ -5,7 +5,8 @@ import {
   View,
   ListView,
   Text,
-  Button
+  Button,
+  Alert
 } from 'react-native';
 
 import FireBaseManager from './../BL/FireBaseManager.js'
@@ -50,16 +51,27 @@ class EventsListPage extends Component {
   deleteEvent(event){
     var arr = ["Delete", "Cancel"];
 
-    Dialog.showActionSheetWithOptions({
-                    options: arr,
-                    cancelButtonIndex: arr.length - 1,
-                    destructiveButtonIndex: arr.length - 1,
-                },
-                (buttonIndex) => {
-                  if (buttonIndex == 0){
-                      this.fireBaseMgr.deleteEvent(event.id);
-                  }
-                });
+    // Works on both iOS and Android
+    Alert.alert(
+      'Delete Event',
+      'Do you want to delete: ' + event.date,
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress: () => this.fireBaseMgr.deleteEvent(event.id)},
+      ],
+      { cancelable: false }
+    )
+
+    // Dialog.showActionSheetWithOptions({
+    //                 options: arr,
+    //                 cancelButtonIndex: arr.length - 1,
+    //                 destructiveButtonIndex: arr.length - 1,
+    //             },
+    //             (buttonIndex) => {
+    //               if (buttonIndex == 0){
+    //                   this.fireBaseMgr.deleteEvent(event.id);
+    //               }
+    //             });
   }
 
   listenForEvents(){

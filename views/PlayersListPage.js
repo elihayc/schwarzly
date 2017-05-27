@@ -17,7 +17,7 @@ import moment from 'moment';
 import FireBaseManager from './../BL/FireBaseManager.js'
 import FBManager from './../BL/FBManager.js'
 
-var Modal   = require('react-native-modalbox');
+var Modal = require('react-native-modalbox');
 
 const StatusBar = require('./components/StatusBar');
 const ListItem = require('./components/ListItem');

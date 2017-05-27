@@ -4,13 +4,18 @@ import {
   StyleSheet,
   View,
   ListView,
-  Text
+  Text,
+  Button
 } from 'react-native';
 
 import FireBaseManager from './../BL/FireBaseManager.js'
+import Dialog from 'react-native-dialog';
+
+var Modal = require('react-native-modalbox');
 
 const StatusBar = require('./components/StatusBar');
 const EventListItem = require('./eventsComponents/EventListItem');
+const EditEventView = require('./eventsComponents/EditEventView');
 
 class EventsListPage extends Component {
   constructor(props) {
@@ -28,6 +33,35 @@ class EventsListPage extends Component {
     this.listenForEvents();
   }
 
+  openAddEventModal(user) {
+    this.setState({isOpen: true});
+  }
+
+  closeAddEventModal(user) {
+    this.setState({isOpen: false});
+  }
+
+  addEvent(eventId, eventDate){
+    this.closeAddEventModal();
+
+    this.fireBaseMgr.addEvent(eventId, eventDate)
+  }
+
+  deleteEvent(event){
+    var arr = ["Delete", "Cancel"];
+
+    Dialog.showActionSheetWithOptions({
+                    options: arr,
+                    cancelButtonIndex: arr.length - 1,
+                    destructiveButtonIndex: arr.length - 1,
+                },
+                (buttonIndex) => {
+                  if (buttonIndex == 0){
+                      this.fireBaseMgr.deleteEvent(event.id);
+                  }
+                });
+  }
+
   listenForEvents(){
     // Load and listen to the events
     this.fireBaseMgr.eventsRef.limitToFirst(50).orderByKey().on('value',(snap) =>{
@@ -35,8 +69,11 @@ class EventsListPage extends Component {
         // var eventData = snap.val()[eventId];
         var events = [];
         snap.forEach((child) => {
+          let event = child.val();
           events.push({
-              date: child.val().date,
+              date: event.date,
+              id: event.id,
+              users: event.users
             });
         });
 
@@ -49,7 +86,8 @@ class EventsListPage extends Component {
 
   _renderItem(event) {
     return (
-      <EventListItem event={event}/>
+      <EventListItem event={event}
+        onDeleteEvent={this.deleteEvent.bind(this)}/>
     );
   }
 
@@ -64,6 +102,18 @@ class EventsListPage extends Component {
               renderRow={this._renderItem.bind(this)}
               style={styles.listView}
             />
+            <Button
+              onPress={() => this.openAddEventModal()}
+              title="Add Event"
+              color="#841584"
+            />
+
+            <Modal style={{height:400}}
+                    backButtonClose={true}  position={"center"} isOpen={this.state.isOpen}
+                    onClosed={() => this.closeAddEventModal()}
+            >
+              <EditEventView onEditEventCompleted={this.addEvent.bind(this)}/>
+            </Modal>
 
           </View>
     );

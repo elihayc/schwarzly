@@ -14,7 +14,7 @@ import moment from 'moment';
 
 import DatePicker from 'react-native-datepicker';
 
-const DATE_FORMAT = "DD-MM-YYYY hh:mm";
+const DATE_FORMAT = "DD-MM-YYYY HH:mm";
 
 class EditEventView extends Component {
   constructor(props){
